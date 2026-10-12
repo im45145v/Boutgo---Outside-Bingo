@@ -41,8 +41,14 @@ echo "Waiting for the local health check..."
 for _ in {1..20}; do
   if curl --fail --silent --show-error http://127.0.0.1:5000/health; then
     echo
-    board_ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+    # Prefer the source address of the default route. `hostname -I` often lists
+    # Docker bridge addresses (172.x) before the board's actual LAN address.
+    board_ip="$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i == "src") {print $(i+1); exit}}')"
+    if [[ -z "$board_ip" ]]; then
+      board_ip="$(hostname -I 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i !~ /^172\.(1[6-9]|2[0-9]|3[01])\./) {print $i; exit}}')"
+    fi
     echo "Outside Bingo is running."
+    echo "Open: http://$(hostname).local:5000"
     echo "Open: http://${board_ip:-<uno-q-ip>}:5000"
     exit 0
   fi

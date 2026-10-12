@@ -56,16 +56,20 @@ Then open `http://<board-ip>:5000` from a device on the same network.
 The app works in labelled demo mode without keys. To enable live features:
 
 ```bash
-cd ~/Boutgo---Outside-Bingo
+APP_DIR="$(systemctl show -p WorkingDirectory --value outside-bingo)"
+cd "$APP_DIR"
 nano .env
 ```
+
+Using the service's configured working directory avoids editing the wrong file
+if the repository was cloned into a nested directory.
 
 Set `SERPAPI_API_KEY` and `BACKBOARD_API_KEY`, save the file, and restart:
 
 ```bash
 chmod 600 .env
 sudo systemctl restart outside-bingo
-curl http://127.0.0.1:5000/health
+until curl --fail http://127.0.0.1:5000/health; do sleep 1; done
 ```
 
 Do not commit `.env`; it is ignored by Git.
@@ -85,6 +89,13 @@ Update to the newest version:
 cd ~/Boutgo---Outside-Bingo
 git pull --ff-only
 ./deploy/uno-q/install.sh
+```
+
+If `hostname -I` lists several addresses, ignore Docker bridge addresses such
+as `172.17.0.1`. Find the LAN address used by the default route with:
+
+```bash
+ip -4 route get 1.1.1.1 | awk '{for (i=1; i<=NF; i++) if ($i == "src") print $(i+1)}'
 ```
 
 If the page is reachable on the board but not another device, confirm both are
