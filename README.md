@@ -24,6 +24,11 @@ python app.py                      # http://localhost:5000
 ```
 Keys: SerpApi at https://serpapi.com/manage-api-key, Backboard at https://app.backboard.io. Leave them blank to use demo mode. Run tests with `pytest`. Health check: `GET /health`.
 
+## Render
+The repository includes a Render Blueprint in `render.yaml` and a workspace Render MCP connection in `.vscode/mcp.json`. In VS Code, start the `render` MCP server and complete its browser authorization. Then create a Blueprint from this GitHub repository in Render and provide the SerpApi and Backboard keys when prompted; secrets are not stored in the Blueprint.
+
+The Blueprint uses Render's free web-service plan and Gunicorn. Its SQLite database is placed at `/tmp/outside_bingo.db`; free instances have an ephemeral filesystem, so progress can be lost when the service restarts or redeploys. Persistent disks require a paid web service.
+
 ## Arduino UNO Q (Debian)
 The app uses only pure-Python packages, binds to `HOST` (default `0.0.0.0`) and `PORT` (default `5000`).
 ```bash
