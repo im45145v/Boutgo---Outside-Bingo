@@ -30,16 +30,16 @@ The repository includes a Render Blueprint in `render.yaml` and a workspace Rend
 The Blueprint uses Render's free web-service plan and Gunicorn. Its SQLite database is placed at `/tmp/outside_bingo.db`; free instances have an ephemeral filesystem, so progress can be lost when the service restarts or redeploys. Persistent disks require a paid web service.
 
 ## Arduino UNO Q (Debian)
-The app uses only pure-Python packages, binds to `HOST` (default `0.0.0.0`) and `PORT` (default `5000`).
+The app is ARM64-compatible and includes an installer for the UNO Q Linux MPU.
+It runs with Gunicorn, starts automatically through `systemd`, and keeps SQLite
+data in `/var/lib/outside-bingo/`. See [ARDUINO_UNO_Q.md](ARDUINO_UNO_Q.md) for
+the SSH/ADB installation, API-key setup, updating, and troubleshooting guide.
+
 ```bash
-scp -r Boutgo---Outside-Bingo arduino@<board-ip>:~/outside-bingo
-ssh arduino@<board-ip>
-cd ~/outside-bingo && sudo apt install -y python3-venv
-python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt
-cp .env.example .env && nano .env
-python app.py                      # open http://<board-ip>:5000
+git clone https://github.com/im45145v/Boutgo---Outside-Bingo.git
+cd Boutgo---Outside-Bingo
+./deploy/uno-q/install.sh
 ```
-**Not tested on an actual UNO Q.** The built-in Flask server is for demos, not hardened production use.
 
 ## Status
 - Implemented and covered by automated tests with mocked network: validation, SerpApi parsing/errors/empty results, Backboard request flow, output validation and fallback, SQLite progress, per-user isolation.
