@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outside Bingo - Less scrolling. More strolling.</title>
+<meta name="description" content="Five tiny quests. One real-world adventure. Zero doomscrolling.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%8C%BF%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="leaf" viewBox="0 0 64 64"><path d="M54 8C26 8 10 22 10 42c0 5 2 9 5 12 3-14 12-24 26-31-11 9-18 19-20 33 3 1 6 2 9 2 20 0 26-26 24-50z" fill="currentColor"/></symbol>
+</svg>
+
+<header class="topbar">
+  <a class="brand" href="#top"><svg class="ico"><use href="#leaf"/></svg> Outside Bingo</a>
+  <div class="stats" aria-live="polite">
+    <span class="stamp" title="Total XP"><b id="xpTotal">0</b> XP</span>
+    <span class="stamp alt" title="Finished quests"><b id="questsTotal">0</b> badges</span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-text">
+      <p class="note">field note no. 1 &middot; less scrolling, more strolling</p>
+      <h1>Your next adventure is just <em>outside.</em></h1>
+      <p class="lede">Five tiny quests. One real-world adventure. Zero doomscrolling.</p>
+      <a class="btn primary" href="#setup" id="cta">Find my adventure</a>
+      <p class="memory-note">Your adventure buddy remembers what you enjoy.</p>
+    </div>
+    <div class="hero-card" aria-label="Example bingo card preview">
+      <span class="tag">example card</span>
+      <ul class="mini">
+        <li>Three shades of green</li><li>Odd-shaped leaf</li><li>Listen for a bird</li>
+        <li>Growing through a crack</li><li class="done">One quiet minute</li>
+      </ul>
+      <svg class="vine" viewBox="0 0 120 120" aria-hidden="true"><use href="#leaf" x="10" y="10" width="50" height="50"/><use href="#leaf" x="60" y="50" width="50" height="50" style="color:#82966A"/></svg>
+    </div>
+  </section>
+
+  <section class="setup" id="setup">
+    <h2>Plan your stroll</h2>
+    <form id="form" novalidate>
+      <label class="field">City or locality
+        <input name="location" id="location" maxlength="80" required placeholder="Ranchi, Jharkhand" autocomplete="off">
+      </label>
+      <fieldset><legend>How long do you have?</legend>
+        <div class="choices">{% for t in times %}
+          <label><input type="radio" name="minutes" value="{{ t }}" {{ 'checked' if t == 20 }}><span>{{ t }} min</span></label>{% endfor %}
+        </div>
+      </fieldset>
+      <fieldset><legend>Preferred adventure</legend>
+        <div class="choices">{% for a in activities %}
+          <label><input type="radio" name="activity" value="{{ a }}" {{ 'checked' if a == 'surprise me' }}><span>{{ a|capitalize }}</span></label>{% endfor %}
+        </div>
+      </fieldset>
+      <fieldset><legend>Energy level</legend>
+        <div class="choices">{% for e in energies %}
+          <label><input type="radio" name="energy" value="{{ e }}" {{ 'checked' if e == 'curious' }}><span>{{ e|capitalize }}</span></label>{% endfor %}
+        </div>
+      </fieldset>
+      <button class="btn primary" id="go" type="submit">Generate my bingo card</button>
+      <p class="hint">
+        {% if live_search %}Live destination search: on.{% else %}Demo mode: live destination search is off (no SerpApi key).{% endif %}
+        {% if live_ai %}AI missions via Backboard: on.{% else %}Demo mode: AI missions are off (no Backboard key).{% endif %}
+      </p>
+    </form>
+    <p class="error" id="formError" role="alert" hidden></p>
+  </section>
+
+  <section class="loading" id="loading" hidden aria-live="polite">
+    <svg class="spin" viewBox="0 0 64 64"><use href="#leaf"/></svg>
+    <p id="loadingText">Scouting the trail&hellip;</p>
+  </section>
+
+  <section class="adventure" id="adventure" hidden>
+    <div id="notices"></div>
+    <article class="dest" id="dest"></article>
+    <div class="card-head">
+      <h2>Your bingo card <span class="tag" id="sourceTag"></span></h2>
+      <p class="progress"><span id="doneCount">0</span>/5 done &middot; <b id="questXp">0</b> XP</p>
+    </div>
+    <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+    <ol class="grid" id="grid"></ol>
+    <p class="hint">Completion is self-reported &mdash; we trust you. Go touch some grass.</p>
+    <section class="win" id="win" hidden>
+      <svg class="badge" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#E8B65A"/><use href="#leaf" x="14" y="14" width="36" height="36" style="color:#234D36"/></svg>
+      <h3>Trail Blazer badge earned!</h3>
+      <p>All five quests done. Your buddy will remember this next time.</p>
+      <button class="btn primary" id="again" type="button">Generate another adventure</button>
+    </section>
+  </section>
+</main>
+
+<footer>Built for Hacktoberfest &middot; SerpApi + Backboard &middot; Less scrolling. More strolling.</footer>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
